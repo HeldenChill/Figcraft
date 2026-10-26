@@ -146,10 +146,24 @@ remain in the sibling repo. Do not infer enduring preferences from one session.
     crop coefficients below `ImagePaint::effective_crop`'s acceptance threshold,
     so renderer falls back to Fill. Review also noted missing rendered pixel tests
     for Fit/Crop transparency and quarter-turn rotation. No source fixes were made.
-    Preserve these as review findings, not verified fixes. Working tree was clean
-    at inspection; observed plugin commits were Fit Images `1eed2407`, Nine Slice
-    `ee44b677`, and Image Trace `72233901`. Do not infer Grid Cleanup landed from
-    the user's phrase “all done”; inspect fresh Git state before claiming it.
+    Preserve these as review findings, not verified fixes. At review time, visible
+    plugin commits were Fit Images `1eed2407`, Nine Slice `ee44b677`, and Image
+    Trace `72233901`; Grid Cleanup had not yet landed.
+
+19. User confirmed Gemini implementation was done and asked for the session
+    memory/playbook update. Fresh inspection at 17:52 local found all four plugin
+    commits: Fit Images `1eed2407`, Nine Slice `ee44b677`, Image Trace `72233901`,
+    Grid Cleanup `0d7c50b9`. Four built manifest/WASM pairs existed in
+    `target/plugins/dist/{fit-images,nine-slice,image-trace,grid-cleanup}`. Follow-up
+    commit `5631dd49` fixed plugin-test Clippy warnings in runtime tests, trace
+    tests and image sampling. Working tree was clean and no Cargo/Gemini process
+    remained. A full `cargo xtask ci` had been observed running shortly before;
+    the later CI fix commit and process exit do not prove the final CI command
+    passed, so leave full-CI status unverified absent a recorded exit result.
+    Prior fresh Nine Slice evidence remains 12 focused tests and 1 built-WASM
+    runtime test passing. Nine Slice review findings above remain unresolved in
+    source: stale inset metadata on Scale, oversized metadata overflow, and tiny
+    crop coefficients falling back to Fill. No fixes were made in the memory task.
 
 ## Continuation lessons
 
@@ -175,6 +189,8 @@ remain in the sibling repo. Do not infer enduring preferences from one session.
 - A completion report and a clean working tree do not prove every planned arc
   landed. Check the full recent commit log, plugin registry/package list and
   roadmap/docs before translating “all done” into a count of delivered plugins.
+  This session's final check found all four plugin commits and four built WASM
+  packages, while the result of the last full CI run remained unverified.
 - For Nine Slice, review generated geometry after every supported mutation path,
   especially `transform.scale`, nested scaling, manual resize and normalization.
   Metadata-backed minima must be finite and bounded before post-command

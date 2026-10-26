@@ -141,10 +141,8 @@ verified by this agent. Plan integrity/link checks passed over six documents and
 
 At 16:30 local on 2026-10-26, the working tree showed Fit Images and Nine Slice
 committed, Image Trace files changing and no visible Grid Cleanup implementation.
-Later the tree was clean at HEAD `72233901`; visible plugin commits were Fit Images
-`1eed2407`, Nine Slice `ee44b677`, and Image Trace `72233901`. This conflicts with
-the user's “all done” phrasing if taken to mean all four tools, so do not infer
-Grid Cleanup delivery without checking newer state or asking what completion means.
+That snapshot was superseded. At 17:52, the tree was clean and all four plugin
+commits plus build artifacts were present, matching the user's completion report.
 
 Read-only Nine Slice review covered `1eed2407..ee44b677` plus current engine paths.
 Fresh tests passed: 12 focused Nine Slice tests and one ignored runtime test that
@@ -159,7 +157,13 @@ the PowerShell PATH. Full CI and screenshot checks were not run. Findings, no fi
 
 Rendered pixel tests also remain absent for Fit/Crop transparency and quarter-turn
 rotation; matrix tests alone do not establish sampling. No source changes were made
-during review. These findings are unresolved until fresh fixes and regressions land.
+during review. Latest inspection at 17:52 found no subsequent Nine Slice fix, so
+these findings remain unresolved. The plugin pack itself is complete in Git:
+Fit Images `1eed2407`, Nine Slice `ee44b677`, Image Trace `72233901`, Grid Cleanup
+`0d7c50b9`. The four `target/plugins/dist/` folders each held a manifest and WASM.
+Commit `5631dd49` fixed test Clippy warnings. A full `cargo xtask ci` process had
+been observed but its final exit/result was not captured; do not claim the CI gate
+passed on that basis. No Gemini process or Cargo build remained at final check.
 
 These are dated observations. Fresh source and implementation evidence govern
 future answers.

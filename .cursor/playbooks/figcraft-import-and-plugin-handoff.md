@@ -215,6 +215,14 @@ copy, normalization and save/load where applicable. Verify reported risks with a
 concrete trigger and call order before assigning severity. Separate correctness
 findings from plan gaps such as missing rendered tests.
 
+When another executor reports completion, check again for running processes, full
+Git log and clean/dirty state, all expected package folders, and actual manifest
+plus WASM files. Record milestone commits individually. A CI command observed
+running, a subsequent cleanup commit, or a process that has exited does not prove
+the gate passed; retain the actual final exit code/log or mark the result unknown.
+On 2026-10-26, all four package pairs and commits were present, followed by a
+Clippy cleanup commit, but final `cargo xtask ci` outcome was not captured.
+
 For Nine Slice, these fresh focused checks passed on 2026-10-26:
 
 ```powershell
@@ -227,6 +235,15 @@ They passed 12 command/helper tests and one ignored test loading the built WASM.
 Focused tests do not replace `cargo xtask ci`, GUI installation, a screenshot read,
 or pixel tests. Record only checks actually run; this review did not run full CI
 or a GUI screenshot.
+
+For metadata-driven behavior, exercise malformed values even when they are finite:
+large finite numbers can overflow in later sums. Trace command order through
+validation, normalization and serialization. A safeguard before normalization
+cannot protect values created during normalization. For geometry tools, exercise
+whole-subtree Scale separately from frame resize; plugins must update their stored
+units or their generated geometry will drift. For image transforms, assert actual
+sampled pixels at edge cases where downstream matrix thresholds can discard a
+composed transform.
 
 ## 9. Record and verify knowledge without disturbing implementation
 
