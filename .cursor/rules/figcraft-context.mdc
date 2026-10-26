@@ -1,0 +1,10 @@
+---
+description: FigCraft repository instructions and shared AI rule discovery.
+alwaysApply: true
+---
+
+Read AGENTS.md at the project root, including its shared rule registry.
+Read .claude/rules/figcraft-project.md for Rust project context and applicability
+of the imported Unity-oriented guidance. Read applicable rules listed by the
+registry before working in their scope. Use ROADMAP.md and docs/gaps.md for
+current priorities and docs/ for project knowledge.
