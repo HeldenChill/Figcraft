@@ -58,7 +58,7 @@ fn trace_vectors_preserve_donut() {
         NodeKind::Vector { network } => {
             // Must have vertices and at least 2 loops (outer ring + inner hole)
             assert!(network.vertices.len() >= 8);
-            assert!(network.regions.len() >= 1);
+            assert!(!network.regions.is_empty());
             assert_eq!(network.regions[0].loops.len(), 2);
             assert_eq!(network.regions[0].winding, figcraft_doc::WindingRule::EvenOdd);
         }
@@ -85,7 +85,7 @@ fn trace_color_regions_and_alpha() {
     let mut pixels = Vec::new();
     for y in 0..20 {
         for x in 0..20 {
-            if y < 4 || y >= 16 || x < 4 || x >= 16 {
+            if !(4..16).contains(&y) || !(4..16).contains(&x) {
                 pixels.push([0, 0, 0, 0]);
             } else if x < 10 {
                 pixels.push([255, 0, 0, 255]); // red
@@ -169,10 +169,10 @@ fn trace_crop_and_parent_transform() {
         let doc = s.doc_mut().unwrap();
         let src = doc.get_mut(src_id).unwrap();
         src.opacity = 0.8;
-        if let Some(p) = src.fills.get_mut(0) {
-            if let PaintKind::Image(ref mut img) = p.kind {
-                img.rotation = 1;
-            }
+        if let Some(p) = src.fills.get_mut(0)
+            && let PaintKind::Image(ref mut img) = p.kind
+        {
+            img.rotation = 1;
         }
     }
 

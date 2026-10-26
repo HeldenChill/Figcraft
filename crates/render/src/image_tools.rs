@@ -285,8 +285,7 @@ mod tests {
         let hash = "img_filters".to_string();
         doc.images.insert(hash.clone(), ImageData { bytes: Arc::new(png), width: 1, height: 1 });
 
-        let mut filters = ImageFilters::default();
-        filters.exposure = 0.5;
+        let filters = ImageFilters { exposure: 0.5, ..Default::default() };
 
         let paint = test_paint(hash, ImageScaleMode::Fill, 0, filters, 0.5);
         let raster = raster_image_paint(&doc, &paint, (10.0, 10.0), 16).unwrap();

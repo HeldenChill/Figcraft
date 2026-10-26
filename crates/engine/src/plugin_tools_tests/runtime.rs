@@ -169,7 +169,7 @@ fn built_image_trace() {
     let mut pixels = Vec::new();
     for y in 0..20 {
         for x in 0..20 {
-            if y < 4 || y >= 16 || x < 4 || x >= 16 {
+            if !(4..16).contains(&y) || !(4..16).contains(&x) {
                 pixels.push([0, 0, 0, 0]);
             } else {
                 pixels.push([0, 0, 0, 255]);
