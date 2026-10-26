@@ -22,10 +22,11 @@ Attached mode uses a matching loopback control port on a separately running app:
 .\target\debug\figcraft-cli.exe mcp --attach 7979
 ```
 
-Pick a free port, not necessarily 7979. The desktop launches in this session had
-no --control argument, so they were not configured for attached MCP. Do not
-assume an MCP connector is registered in Codex/Claude just because the CLI
-server exists. No connector config was added in this session.
+Pick a free port, not necessarily 7979. Initial setup launches had no --control
+argument. Later same-day crash diagnostics did launch with a dynamically selected
+free port and verified direct JSON control inspection/screenshot. MCP --attach
+itself and client connector registration were not exercised. No connector config
+was added; do not infer registration from a working CLI or control socket.
 
 tools/list returned these 18 names: list_commands, run_command, batch,
 create_node, set_properties, inspect_document, get_node, select, export,
@@ -42,7 +43,8 @@ because the first attempt may already have changed the document.
 FigCraft uses its own WebAssembly plugin format, not Figma's plugin runtime.
 The sandbox uses wasmi with instruction/memory limits and no WASI filesystem,
 network or clock. Plugins request read/write access and allowed engine commands.
-API 2 supports panels, parameters, settings and widgets. A collaboration server
+API 2 supports panels/settings; API 3 adds widgets, API 4 adds save-file support.
+A collaboration server
 can host a plugin directory; none was hosted during this session.
 
 The main menu is behind the FigCraft logo at the top of the narrow far-left
@@ -53,10 +55,12 @@ Import: logo > Plugins > Development > Import plugin from manifest...
 Select a figcraft-plugin.json, keeping its referenced .wasm beside it. Installed
 plugins appear in Plugins. Commands with parameters open a form; click Run.
 Manage plugins > Installed shows installed entries and has an Import button.
-Widgets are under Plugins > Widgets. No UI import was verified in the session.
+Widgets are under Plugins > Widgets. No UI plugin import was verified by this
+agent; later control-channel screenshots did not establish plugin installation.
 
 Four example packages were built under target/plugins/dist/: tidy-names,
 swatch-grid, counter and export-names. Each has figcraft-plugin.json plus WASM.
+This describes initial setup, before Gemini's later four-tool implementation.
 The separate plugins/ workspace provides the Rust SDK and examples. Regenerate
 them with cargo xtask plugins or the broader cargo xtask wasm gate. target/
 contents are build artifacts, not durable source files.
@@ -83,3 +87,13 @@ optionally with editable hex-label text, and selects the created layers.
 Prior user guidance about adjusting size/gap refers specifically to From hex
 colours..., not the built-in-palette panel. This distinction comes from source;
 the UI was not exercised during the session.
+
+## Later four-tool request and active handoff
+
+Owner requested original equivalents of Image Tracer, 9-Slice Scaling (New),
+Make images fit and 8×4-Point Grid System. Research, unknown reference details,
+approved design, exact planned IDs/contracts and Gemini assignment are in
+[import/render/plugin handoff memory](mem-figcraft-import-render-and-plugin-handoff.md).
+Master plan is local `.cursor/plans/implement/2026-10-26-game-ui-plugin-pack.md`.
+Owner says Gemini is implementing; do not claim new packages exist or run another
+implementation until its output is reviewed. Plans are ignored by Git by default.

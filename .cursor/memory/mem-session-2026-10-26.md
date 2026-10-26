@@ -69,9 +69,98 @@ reusable details.
 
 ## Outstanding work and boundaries
 
-Shared craftrules access/URL is unresolved; GitHub CLI authentication was rejected.
-Do not store tokens or attempt to infer credentials. Full native CI, production
-browser bundling, attached MCP and GUI plugin execution remain unverified.
-No commits or pushes were made. Setup changes were left in the working tree.
-No private documents, third-party product assets, real-user photos, or fonts were
-added to this repo. Do not infer enduring user preferences from these requests.
+At the initial setup stage, shared craftrules access/URL remained unresolved and
+GitHub CLI authentication was rejected. Do not store tokens or infer credentials.
+No commits or pushes were made by this agent. The continuation below supersedes
+earlier statements about absent control-channel use, but does not establish full
+native CI, production browser bundling, attached MCP or GUI plugin execution.
+No owner artwork or third-party product assets were committed or shipped. Fonts
+remain in the sibling repo. Do not infer enduring preferences from one session.
+
+## Continuation: build, .fig crash, four plugins and Gemini handoff
+
+9. User invoked caveman full mode. Terse communication remained active in this
+   conversation; code, plans and documentation use ordinary precise language.
+   This is a session instruction, not an inferred permanent preference.
+10. User requested building/running the app. Cargo was installed but missing from
+    the tool shell PATH; used its explicit user-profile path. Desktop target built
+    successfully in about 12 seconds, despite unused dependency patch warnings,
+    then a visible responding window with a nonzero handle was observed.
+11. User asked about exporting Figma designs into FigCraft. Checked local format
+    docs and Figma's public local-copy guide. Supplied .fig save-local-copy/open
+    workflow, best-effort limitations, fonts and missing comments/version history.
+12. User reported an app loading error, clarified that opening a .fig closed the
+    app, and supplied a Downloads file. CLI info successfully read the roughly
+    309 MB document: 112,021 nodes and 1,673 images. GUI reproduction captured a
+    tiny-skia 0.12.0 Hard Light multiplication-overflow panic. Scoped package-only
+    debug build override succeeded; same document then opened, answered control
+    requests and rendered. Later screenshot was read visually. This remains a
+    temporary workaround; permanent source fix/regression test was not made.
+13. User supplied an image naming four Figma plugins. Source inspection confirmed
+    FigCraft's independent WASM runtime and existing four examples; those reference
+    plugins did not run directly. User requested analysis. Researched creators'
+    descriptions and general nine-slice mechanics. Community pages blocked direct
+    fetching; exact reference behavior was partly unknown and no Figma plugin was
+    exercised. Findings and cited sources are in the import/render/handoff memory.
+14. User requested all four equivalents in FigCraft. Applied brainstorming skill,
+    inspected engine/SDK architecture and wrote an original-tool design. User
+    explicitly approved that design on 2026-10-26.
+15. User invoked writing-plans, requesting enough detail for Gemini to implement.
+    Wrote approved design plus master and four child plans under .cursor/plans.
+    Master specifies shared contracts and Fit Images > Nine Slice > Image Trace >
+    Grid Cleanup execution order. Child plans include exact APIs/defaults, source
+    paths, algorithm decisions, TDD cases, runtime packages, CI, screenshots and
+    installation. Self-review corrected panel JSON type/path, M11 milestone and
+    undersized nine-slice recovery. Six-document integrity/link checks passed;
+    five implementation plans contained 57 actionable steps. No implementation
+    tests or source changes were performed by this agent in the planning task.
+16. User asked how to instruct Gemini. Supplied a ready-to-paste prompt pointing
+    to master/linked plans, approved scope, inline execution, source preservation,
+    renderer workaround and completion evidence. Explained that plans/ is ignored,
+    so another checkout needs the six files shared explicitly.
+17. User stated Gemini was working and requested this full session memory/playbook
+    update. Concurrent source/test and .gitignore edits were observed; ownership
+    stays with Gemini. This agent updated only project-owned knowledge files and
+    added the confirmed renderer bug record. Gemini feature completion, runtime
+    tests, installation and passing CI remain unverified here.
+
+## Continuation lessons
+
+- A large file that closes the GUI can parse successfully; compare headless info
+  with GUI backtrace before blaming parser limits, OOM or GPU drivers.
+- Read the first panic as well as the stack tail. This failure was in a dependency
+  blend stage; the scoped build workaround is not a source fix.
+- Choose control ports via bind-to-zero. A guessed occupied port can fail the
+  diagnostic channel while the GUI still opens, creating a separate misleading error.
+- Early screenshots may precede asynchronous canvas rendering. Inspect pixels and
+  use bounded settle checks; a returned screenshot path or refined label alone is
+  weaker than a visibly rendered result. User navigation may change during capture.
+- Source schema names matter: boolean panel controls are not serialized as
+  checkbox, and the schema lives in manifest.rs, not a guessed panel.rs.
+- Plans must pin intended behavior where public plugin descriptions are vague,
+  particularly image-fit mode changes versus resizing layer bounds.
+- Passing plan/link checks does not prove plugin implementation. Require actual
+  built-WASM panel/apply/undo tests in addition to engine helpers and mocks.
+- A broad plans/ ignore pattern includes .cursor/plans; local handoff artifacts
+  must be deliberately shared. Do not assume another model's checkout has them.
+- With Gemini implementing, avoid competing source edits, global sync pulls,
+  unrelated staging/commits and redundant builds during a knowledge-only update.
+
+## Current unresolved boundaries
+
+The source renderer bug has a verified temporary workaround only; see the
+authoritative rendering domain ledger. Initial setup's craftrules access,
+GitHub authentication, full native CI, complete browser bundle and attached MCP
+client registration were not resolved by this continuation. Direct JSON control
+inspection/screenshot was verified, which is distinct from MCP attach. Four new
+plugins have approved plans and a user-assigned Gemini executor; no completion
+or installation is claimed. Runtime PIDs/ports are deliberately absent from memory.
+
+## Knowledge-update validation
+
+After these edits on 2026-10-26, the installed bug-memory validator read the new
+collection and reported one record, zero errors and zero warnings. The AI index
+checker reported zero findings. The actual prompt hook emitted the new
+import/render/handoff hub and bug hub within its context budget. Git diff --check
+reported no whitespace errors; Git emitted only Windows LF-to-CRLF notices.
+These are documentation/discovery results, not app or Gemini feature tests.

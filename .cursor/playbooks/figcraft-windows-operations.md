@@ -3,6 +3,9 @@
 Created from the 2026-10-26 session. Project-owned, not a shared manifest entry.
 Use this for local setup, shared AI adoption, builds, launches and plugin help.
 Start with AGENTS.md and the memory index; recheck the current machine and pins.
+For the later same-day .fig renderer failure, free-port diagnostics, asynchronous
+screenshots and Gemini plugin handoff, use the complementary
+[import and plugin handoff playbook](figcraft-import-and-plugin-handoff.md).
 
 ## 1. Orient and inspect
 
@@ -211,8 +214,12 @@ dated session history in its session memory, and bulky logs in gitignored plan/.
 Record limits, failures and pending access, not just successful outcomes.
 Never persist secrets, unstable PIDs or assumed enduring user preferences.
 
-After edits: run the AI index checker, exercise the prompt hook, regenerate root
-registries via the shared pull, repeat a zero-change preview and git diff --check.
+After knowledge edits: run the AI index checker, bug validator when applicable,
+exercise the prompt hook and run git diff --check. Shared configuration or registry
+input changes additionally need the documented shared pull and zero-change preview;
+ordinary rows in existing knowledge indexes do not require a sync pull. Do not
+regenerate shared configuration while another executor is changing the workspace
+unless coordinated and necessary.
 Do not rerun a lengthy native build merely for prose changes. Before a commit,
 follow the repository's full quality gates; no commit or push was made during
 the setup session.

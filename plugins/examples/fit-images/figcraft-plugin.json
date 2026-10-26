@@ -1,0 +1,23 @@
+{
+  "id": "org.figcraft.tools.fit-images",
+  "name": "Fit Images",
+  "version": "1.0.0",
+  "description": "Change image fill scale modes between Fit and Fill without changing layer sizes.",
+  "main": "fit_images.wasm",
+  "api": 2,
+  "permissions": {
+    "access": "write",
+    "commands": ["image.fit"]
+  },
+  "commands": [
+    { "id": "panel", "label": "Fit Images…" },
+    {
+      "id": "apply",
+      "label": "Apply Fit Images",
+      "params": [
+        { "name": "mode", "label": "Mode", "type": "select", "options": ["fit", "fill"], "default": "fit" },
+        { "name": "descendants", "label": "Include descendants", "type": "boolean", "default": false }
+      ]
+    }
+  ]
+}

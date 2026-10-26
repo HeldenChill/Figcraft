@@ -64,6 +64,8 @@ FigCraft's scope. A zero-change dry run and zero-finding index check passed.
 | Layers/assets | Compiled xtask runner checks passed |
 | AI config | Index checker and zero-change shared-sync preview passed |
 | Desktop | Visible window launched repeatedly; process responded and had a window handle |
+| Later .fig diagnostics | CLI info succeeded on owner's 309 MB file; GUI Hard Light overflow reproduced; scoped workaround rebuild opened and visibly rendered it |
+| Direct control | Later free-port GUI run answered ui.inspect and ui.screenshot; PNG inspected |
 
 Not performed: full native workspace tests, full cargo xtask ci, a complete
 Trunk release bundle, attached MCP verification against the visible app, GUI
@@ -75,3 +77,19 @@ is plan/SETUP.md; tool facts are plan/setup/tools.json. These can be absent in a
 fresh clone. Existing Git state was branch Hung, HEAD 08c1df76 (~FIX: AI Config)
 before setup edits. No commit or push was made in this session. Recheck Git and
 process state rather than assuming this snapshot remains current.
+
+## Later same-day renderer and executor boundary
+
+The tool shell again lacked Cargo on PATH despite the installed toolchain. An
+explicit `$env:USERPROFILE\.cargo\bin\cargo.exe` invocation built the desktop.
+The normal debug binary could open an empty document but crashed drawing the
+owner's .fig due to tiny-skia 0.12.0 Hard Light u16 overflow. The package-only
+overflow-check override was verified as a temporary workaround; ordinary rebuild
+may reintroduce it. See
+[import/render handoff memory](mem-figcraft-import-render-and-plugin-handoff.md)
+and rendering bug ledger for exact evidence and limits. No global profile or
+dependency source was changed by this agent.
+
+Owner subsequently assigned Gemini the approved four-plugin implementation.
+Concurrent code changes are expected; do not overwrite or commit them during
+maintenance of these setup notes. Fresh implementation verification is pending.

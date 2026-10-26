@@ -22,6 +22,8 @@ or treat historical process IDs as durable identifiers.
 | HUB: Project architecture, features, status and source authority | `mem-figcraft-project.md` |
 | HUB: Windows environment, setup evidence and unresolved access | `mem-figcraft-windows-setup.md` |
 | HUB: MCP automation, plugin installation and Swatch Grid usage | `mem-figcraft-mcp-plugins.md` |
+| HUB: Figma import, renderer crash workaround, four plugins and Gemini handoff | `mem-figcraft-import-render-and-plugin-handoff.md` |
+| HUB: Confirmed bugs and lifecycle evidence by domain | `bugs/README.md` |
 | Session record: 2026-10-26 requests, decisions and lessons | `mem-session-2026-10-26.md` |
 | Shared AI config ownership, sync mechanics and generic policies | `mem-shared-ai-config.md` |
 <!-- LOCAL-MEMORY-INDEX:END -->
@@ -31,5 +33,6 @@ or treat historical process IDs as durable identifiers.
 - Project instructions: AGENTS.md and CLAUDE.md at the repository root.
 - Knowledge: docs/, ROADMAP.md, docs/gaps.md and Cargo.toml.
 - Procedures: .cursor/playbooks/README.md.
+- Import diagnosis and plugin execution handoff: .cursor/playbooks/figcraft-import-and-plugin-handoff.md.
 - Workstation-specific evidence: plan/SETUP.md and plan/setup/ (gitignored).
 - Memory workflow: .claude/rules/memory-first-workflow.md.

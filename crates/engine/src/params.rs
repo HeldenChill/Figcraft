@@ -90,7 +90,7 @@ pub fn req_id(cmd: &str, p: &Value, key: &str) -> Result<NodeId> {
 
 /// The offending value for an error message, cut to a few dozen characters so a huge param
 /// doesn't end up in the error whole.
-fn shown(v: &Value) -> String {
+pub(crate) fn shown(v: &Value) -> String {
     const MAX: usize = 40;
     let text = v.to_string();
     match text.char_indices().nth(MAX) {

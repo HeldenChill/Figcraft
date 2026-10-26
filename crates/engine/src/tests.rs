@@ -456,6 +456,11 @@ fn every_command_survives_junk_params() {
         json!({"commands": [{"command": "select.all", "as": "\u{0}"}, {"command": "node.set", "params": {"ids": [
             {"$ref": "\u{0}", "field": "ids/18446744073709551616/x"}, {"$ref": {"x": 1}}, {"$step": 0, "field": "//"}, {"$ref": "\u{0}", "field": "/"}],
             "props": {"name": {"$ref": "nope", "field": 5}}}}]}),
+        // Plugin tools (fit, nine-slice, trace, grid) as junk.
+        json!({"mode": "stretch", "descendants": {"x": 1}, "ids": [1e308, -5, "NaN"]}),
+        json!({"mode": [1], "descendants": "maybe", "left": -1e308, "right": "NaN", "top": [5], "bottom": null}),
+        json!({"threshold": 1e308, "invert": "yes", "colors": -5, "alphaCutoff": "NaN", "resolution": 1000000, "output": [1]}),
+        json!({"step": 3, "properties": {"positions": "yes", "dimensions": 1}, "bindVariables": "no", "replaceBindings": [5]}),
     ];
     for spec in all_commands() {
         if matches!(

@@ -395,6 +395,8 @@ image sizes) and refuses it if anything is off.
 - **Export names** (`export-names`, API 4): saves the names of the selected layers (optionally the
   layers inside them too) as `layer-names.txt`. It reads the document and offers the file with
   `save_file`; FigCraft asks where it goes.
+- **Fit Images** (`fit-images`, API 2): toggles image fill scale modes between Fit and Fill across
+  selected layers without changing layer sizes. See [Plugin tools](plugin-tools.md).
 
 `cargo xtask plugins` (part of `cargo xtask wasm` and `cargo xtask ci`; it needs the
 `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`) checks, tests and

@@ -17,6 +17,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "fit-images"
+version = "0.1.0"
+dependencies = [
+ "figcraft-plugin-sdk",
+ "serde_json",
+]
+
+[[package]]
 name = "figcraft-plugin-sdk"
 version = "0.1.0"
 dependencies = [

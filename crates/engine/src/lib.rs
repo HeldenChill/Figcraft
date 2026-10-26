@@ -48,6 +48,7 @@ pub mod online;
 pub mod params;
 pub mod playground;
 pub mod plugin_directory;
+pub mod plugin_tools;
 pub mod plugins;
 pub mod proto_run;
 pub mod rename;
@@ -1956,6 +1957,8 @@ mod view_behaviour_tests;
 #[cfg(test)]
 mod widgets_tests;
 
+#[cfg(test)]
+mod plugin_tools_tests;
 #[cfg(test)]
 mod selection_reorder_tests;
 #[cfg(test)]

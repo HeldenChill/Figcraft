@@ -6,6 +6,7 @@ root registries. Read the matching memory before applying a procedure.
 | Playbook | Scope |
 |---|---|
 | [Windows setup, build, launch, MCP and plugins](figcraft-windows-operations.md) | FigCraft procedures and lessons verified on 2026-10-26 |
+| [Figma import, renderer diagnosis and plugin handoff](figcraft-import-and-plugin-handoff.md) | Separate import from render failures, scoped Hard Light workaround, screenshot settling, original plugin research and Gemini execution handoff |
 | [AI config adoption](ai-config-adoption.md) | Shared onboarding mechanics; translate Unity-specific examples to actual project facts |
 | [Reduce cold-start context](reduce-coldstart-context.md) | Shared context organization guidance |
 | [Character core/glue split](character-core-glue-split-refactor.md) | Synced Unity character-system example; does not apply to FigCraft |
