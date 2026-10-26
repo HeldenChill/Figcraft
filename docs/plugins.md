@@ -397,6 +397,8 @@ image sizes) and refuses it if anything is off.
   `save_file`; FigCraft asks where it goes.
 - **Fit Images** (`fit-images`, API 2): toggles image fill scale modes between Fit and Fill across
   selected layers without changing layer sizes. See [Plugin tools](plugin-tools.md).
+- **Nine Slice** (`nine-slice`, API 2): slices an image rectangle into a 3x3 resizable panel with
+  fixed corners and stretching edges. See [Plugin tools](plugin-tools.md).
 
 `cargo xtask plugins` (part of `cargo xtask wasm` and `cargo xtask ci`; it needs the
 `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`) checks, tests and

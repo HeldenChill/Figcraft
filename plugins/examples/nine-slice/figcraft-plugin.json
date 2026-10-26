@@ -1,0 +1,25 @@
+{
+  "id": "org.figcraft.tools.nine-slice",
+  "name": "Nine Slice",
+  "version": "1.0.0",
+  "description": "Generate resizable 9-slice panels from image rectangles.",
+  "main": "nine_slice.wasm",
+  "api": 2,
+  "permissions": {
+    "access": "write",
+    "commands": ["image.nineSlice"]
+  },
+  "commands": [
+    { "id": "panel", "label": "Nine Slice…" },
+    {
+      "id": "apply",
+      "label": "Apply Nine Slice",
+      "params": [
+        { "name": "left", "label": "Left inset (0 = auto)", "type": "number", "default": 0, "min": 0 },
+        { "name": "right", "label": "Right inset (0 = auto)", "type": "number", "default": 0, "min": 0 },
+        { "name": "top", "label": "Top inset (0 = auto)", "type": "number", "default": 0, "min": 0 },
+        { "name": "bottom", "label": "Bottom inset (0 = auto)", "type": "number", "default": 0, "min": 0 }
+      ]
+    }
+  ]
+}

@@ -1243,6 +1243,11 @@ pub fn restore_worlds(doc: &mut Document, worlds: &[(NodeId, Affine)]) -> Result
 
 pub fn resize_node(doc: &mut Document, id: NodeId, w: f64, h: f64) -> Result<()> {
     let n = doc.get(id)?;
+    if let Some((min_w, min_h)) = crate::plugin_tools::nine_slice::minimum_size(n)
+        && (w < min_w || h < min_h)
+    {
+        return Err(bad("node.set", format!("cannot resize nine-slice frame below minimum size ({min_w:.1}, {min_h:.1})")));
+    }
     let (ow, oh) = (n.width, n.height);
     let group = n.kind.bounds_follow_children();
     let section = matches!(n.kind, NodeKind::Section { .. });

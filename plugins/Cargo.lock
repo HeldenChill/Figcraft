@@ -17,17 +17,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "fit-images"
+name = "figcraft-plugin-sdk"
 version = "0.1.0"
 dependencies = [
- "figcraft-plugin-sdk",
  "serde_json",
 ]
 
 [[package]]
-name = "figcraft-plugin-sdk"
+name = "fit-images"
 version = "0.1.0"
 dependencies = [
+ "figcraft-plugin-sdk",
  "serde_json",
 ]
 
@@ -42,6 +42,14 @@ name = "memchr"
 version = "2.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+
+[[package]]
+name = "nine-slice"
+version = "0.1.0"
+dependencies = [
+ "figcraft-plugin-sdk",
+ "serde_json",
+]
 
 [[package]]
 name = "proc-macro2"

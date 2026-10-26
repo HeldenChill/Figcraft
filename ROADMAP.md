@@ -2,7 +2,7 @@
 
 **Stage: alpha** · next: beta, ~26 points and ~162–292 h away (one Opus 5.5 agent; ~33–67 h wall-clock with 5 agents)
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-26 · **Change:** minor (Fit Images plugin (M11): adds `org.figcraft.tools.fit-images` WASM plugin and `image.fit` engine command; fits image-filled layers to intrinsic image dimensions with fill or fit mode, aspect ratio lock, and single-step undo; earlier changes are in the revision history below) · **Target:** Figma Design (desktop app 126.10.7)
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-26 · **Change:** minor (Nine Slice plugin (M11): adds `org.figcraft.tools.nine-slice` WASM plugin and `image.nineSlice` engine command; slices an image rectangle into a 3x3 resizable panel with fixed corners, stretching edges, and minimum dimension guards; earlier changes are in the revision history below) · **Target:** Figma Design (desktop app 126.10.7)
 
 FigCraft is a clean-room, open-source, pure-Rust reimplementation of the Figma design workflow,
 native on macOS, Windows, Linux and FreeBSD and in the browser, fully drivable by agents through
@@ -338,6 +338,7 @@ Ranked; detail and milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-26 | minor | Nine Slice plugin (M11): adds `org.figcraft.tools.nine-slice` WASM plugin and `image.nineSlice` engine command; slices an image rectangle into a 3x3 resizable frame with 9 child rectangles sharing image hash, fixed corners, stretching edges, metadata tags, and resize protection. Numbers unchanged |
 | 2026-10-26 | minor | Fit Images plugin (M11): adds `org.figcraft.tools.fit-images` WASM plugin and `image.fit` engine command; fits image-filled layers to intrinsic image dimensions with fill or fit mode, aspect ratio lock, and single-step undo. Numbers unchanged |
 | 2026-10-25 | minor | egui 0.37 capture lifecycle: screenshots with hidden or unknown visibility queue, request a hidden paint, and expire after 60 seconds if no capture arrives (headless-tested contract). Logic-only edits, saves and inspection continue while hidden. Native visible GUI and forced hidden-window paint, browser and Wayland behavior remain unqualified; parity percentages are unchanged. |
 | 2026-10-24 | minor | Server memory (#1134): when the last person leaves a file nobody edited, figcraft-server keeps the client ids it issued in the log instead of rewriting the snapshot (compaction still follows `compact_after`/`compact_mb` and edits), and a snapshot is encoded straight into its file buffer, without a second copy of the body; the file format is unchanged. Numbers unchanged |
