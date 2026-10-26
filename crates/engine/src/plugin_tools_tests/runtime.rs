@@ -143,3 +143,91 @@ fn built_nine_slice() {
     let h_frame = h_doc.node(figcraft_doc::NodeId(h_frame_id)).expect("h_frame node");
     assert_eq!(h_frame.children.len(), 9);
 }
+
+#[test]
+#[ignore = "requires wasm plugins to be built (cargo xtask plugins)"]
+fn built_image_trace() {
+    let manifest_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("target")
+        .join("plugins")
+        .join("dist")
+        .join("image-trace")
+        .join("figcraft-plugin.json");
+
+    if !manifest_path.exists() {
+        eprintln!("skipping: {} does not exist. Run `cargo xtask plugins` first.", manifest_path.display());
+        return;
+    }
+
+    let manifest_str = manifest_path.to_str().unwrap();
+
+    let mut s = Session::new();
+    let mut pixels = Vec::new();
+    for y in 0..20 {
+        for x in 0..20 {
+            if y < 4 || y >= 16 || x < 4 || x >= 16 {
+                pixels.push([0, 0, 0, 0]);
+            } else {
+                pixels.push([0, 0, 0, 255]);
+            }
+        }
+    }
+    let img_id = image_layer(&mut s, 20, 20, &pixels);
+    s.set_selection(vec![img_id]);
+
+    // 1. Import plugin
+    let imported = s.execute("plugin.import", &json!({"path": manifest_str})).unwrap();
+    assert_eq!(imported["id"], "org.figcraft.tools.image-trace");
+
+    let before_panel = snapshot(&s);
+
+    // 2. Open panel, assert no document or history change
+    let res = s.execute("plugin.run", &json!({"id": "org.figcraft.tools.image-trace", "command": "panel"})).unwrap();
+    assert_eq!(snapshot(&s), before_panel);
+    assert!(res["panel"].is_object(), "panel must be open");
+
+    // 3. Set fields
+    s.execute("plugin.event", &json!({"id": "org.figcraft.tools.image-trace", "control": "threshold", "value": 140})).unwrap();
+    assert_eq!(snapshot(&s), before_panel);
+
+    // 4. Click apply
+    let before_apply = snapshot(&s);
+    let apply_res = s.execute("plugin.event", &json!({"id": "org.figcraft.tools.image-trace", "control": "apply"})).unwrap();
+    let root_id = apply_res["output"]["created"][0].as_u64().expect("root_id returned");
+
+    // Group has at least 1 vector child
+    let doc = s.doc().unwrap();
+    let root = doc.node(figcraft_doc::NodeId(root_id)).expect("root group");
+    assert!(!root.children.is_empty());
+
+    // 5. One undo restores pre-apply document
+    assert!(s.undo().unwrap());
+    assert_eq!(snapshot(&s), before_apply);
+
+    // 6. Headless apply with mask output
+    s.set_selection(vec![img_id]);
+    let headless = s
+        .execute(
+            "plugin.run",
+            &json!({
+                "id": "org.figcraft.tools.image-trace",
+                "command": "apply",
+                "params": {"output": "mask"}
+            }),
+        )
+        .unwrap();
+    let mask_frame_id = headless["output"]["created"][0].as_u64().expect("mask_frame_id");
+    let m_doc = s.doc().unwrap();
+    let m_frame = m_doc.node(figcraft_doc::NodeId(mask_frame_id)).expect("mask frame node");
+    assert!(matches!(m_frame.kind, figcraft_doc::NodeKind::Frame));
+    assert!(m_frame.clip);
+    assert_eq!(m_frame.children.len(), 2);
+
+    // 7. One undo removes mask frame
+    assert!(s.undo().unwrap());
+    assert_eq!(snapshot(&s), before_apply);
+}

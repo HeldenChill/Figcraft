@@ -175,7 +175,7 @@ pub fn get(hash: &str, data: Option<&ImageData>, filters: &ImageFilters, profile
 }
 
 /// The filters, then the conversion into the document's colour space.
-fn finish(p: &mut Pixmap, filters: &ImageFilters, profile: ColorProfile) {
+pub(crate) fn finish(p: &mut Pixmap, filters: &ImageFilters, profile: ColorProfile) {
     if !filters.is_identity() {
         apply_filters(p, filters);
     }

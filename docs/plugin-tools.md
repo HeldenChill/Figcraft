@@ -104,3 +104,45 @@ Result returns a standardized `ToolReport`:
 - Insets must satisfy `left + right < width` and `top + bottom < height`.
 - Protected or locked layers return a BadParams error.
 
+## Image Trace
+
+**Plugin ID:** `org.figcraft.tools.image-trace`  
+**Package:** `plugins/examples/image-trace`  
+**Command:** `image.trace`  
+**Manifest:** `image_trace.wasm` (API 2)
+
+### Intent & Behavior
+
+Image Trace converts bitmap images into editable vector layers or isolated masked frames.
+- **Monochrome mode:** Traces silhouette based on luminance threshold (0–255, default 128) and alpha cutoff (1–255, default 16), with optional inversion.
+- **Color mode:** Deterministic frequency-weighted median-cut color quantization producing up to 16 palette colors.
+- **Clean cell-boundary contour walker:** Extracts closed vector paths with holes (EvenOdd winding), avoiding cross-diagonal bridges or pixelation artifacts.
+- **Vector output:** Inserts a Group containing one Vector node per palette color directly above the source layer.
+- **Mask output:** Inserts a clipped Frame containing a compound white Vector mask at the bottom and a clone of the source image on top, avoiding unintended sibling masking.
+
+### Panel Controls
+
+- **Mode:** `monochrome` or `color` (default: `monochrome`).
+- **Threshold:** 0–255 (default: `128`).
+- **Invert silhouette:** Checkbox (default: `false`).
+- **Max colors:** 2–16 (default: `8`).
+- **Alpha cutoff:** 1–255 (default: `16`).
+- **Resolution:** 16–512 (default: `256`).
+- **Output:** `vectors` or `mask` (default: `vectors`).
+- **Apply:** Runs `image.trace` on selected image rectangles.
+- **Close:** Closes the settings panel.
+
+### Headless & CLI Contract
+
+```json
+{"command": "image.trace", "params": {"ids": [12], "mode": "monochrome", "threshold": 128, "invert": false, "colors": 8, "alphaCutoff": 16, "resolution": 256, "output": "vectors"}}
+```
+
+### Limitations & Protection
+
+- Maximum 16 eligible sources per call.
+- Maximum 512×512 raster tracing resolution; images >16M pixels or >32 MiB rejected before decoding.
+- Source layer must be an unnested non-mask rectangle with exactly one visible image fill (`Fill`, `Fit`, or `Crop`), no strokes, effects, corner radii, or children.
+- Cell-boundary paths have no curve smoothing in v1 (pixel-exact vector boundaries).
+- Transparent/empty traces produce no nodes and report as skipped.
+

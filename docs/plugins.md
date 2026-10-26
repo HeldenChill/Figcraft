@@ -399,6 +399,8 @@ image sizes) and refuses it if anything is off.
   selected layers without changing layer sizes. See [Plugin tools](plugin-tools.md).
 - **Nine Slice** (`nine-slice`, API 2): slices an image rectangle into a 3x3 resizable panel with
   fixed corners and stretching edges. See [Plugin tools](plugin-tools.md).
+- **Image Trace** (`image-trace`, API 2): traces bitmap artwork to editable vector paths or isolated
+  masks. See [Plugin tools](plugin-tools.md).
 
 `cargo xtask plugins` (part of `cargo xtask wasm` and `cargo xtask ci`; it needs the
 `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`) checks, tests and

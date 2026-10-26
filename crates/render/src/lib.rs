@@ -14,6 +14,7 @@ pub mod fx;
 pub mod glass;
 pub mod grain;
 pub mod image_profile;
+pub mod image_tools;
 pub mod images;
 pub mod lod;
 pub mod paint;
@@ -23,6 +24,7 @@ pub mod shadow;
 
 pub use draw::{node_outline, paint_bounds, stroke_fill, subtree_outline, ts_path};
 pub use export_depth::{ExportDepthError, MAX_EXPORT_DEPTH, check_export_depth};
+pub use image_tools::{RasterImage, raster_image_paint};
 pub use retained::{Retained, Work};
 pub use tiny_skia::{FillRule, Pixmap};
 
