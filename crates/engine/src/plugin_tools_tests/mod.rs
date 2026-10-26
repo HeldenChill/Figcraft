@@ -1,4 +1,5 @@
 pub mod fit;
+pub mod grid;
 pub mod helpers;
 pub mod nine_slice;
 pub mod runtime;

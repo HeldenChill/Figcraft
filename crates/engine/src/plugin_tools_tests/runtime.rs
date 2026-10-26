@@ -231,3 +231,87 @@ fn built_image_trace() {
     assert!(s.undo().unwrap());
     assert_eq!(snapshot(&s), before_apply);
 }
+
+#[test]
+#[ignore = "requires real WASM artifact; run cargo xtask plugins first"]
+fn built_grid_cleanup() {
+    let manifest_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("target")
+        .join("plugins")
+        .join("dist")
+        .join("grid-cleanup")
+        .join("figcraft-plugin.json");
+
+    if !manifest_path.exists() {
+        eprintln!("skipping: {} does not exist. Run `cargo xtask plugins` first.", manifest_path.display());
+        return;
+    }
+
+    let manifest_str = manifest_path.to_str().unwrap();
+
+    let mut s = Session::new();
+    let r = s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 100, "height": 100})).unwrap();
+    let id = crate::params::id_of(&r["id"]).unwrap();
+    {
+        let doc = s.doc_mut().unwrap();
+        doc.get_mut(id).unwrap().layout = Some(figcraft_doc::AutoLayout { padding: [15.0, 15.0, 15.0, 15.0], ..Default::default() });
+    }
+    s.set_selection(vec![id]);
+
+    // 1. Import plugin
+    let imported = s.execute("plugin.import", &json!({"path": manifest_str})).unwrap();
+    assert_eq!(imported["id"], "org.figcraft.tools.grid-cleanup");
+
+    let before_panel = snapshot(&s);
+
+    // 2. Open panel, assert no document or history change
+    let res = s.execute("plugin.run", &json!({"id": "org.figcraft.tools.grid-cleanup", "command": "panel"})).unwrap();
+    assert_eq!(snapshot(&s), before_panel);
+    assert!(res["panel"].is_object(), "panel must be open");
+
+    // 3. Set fields, assert no document change
+    s.execute("plugin.event", &json!({"id": "org.figcraft.tools.grid-cleanup", "control": "bindVariables", "value": true})).unwrap();
+    assert_eq!(snapshot(&s), before_panel);
+
+    // 4. Click apply
+    let before_apply = snapshot(&s);
+    let apply_res = s.execute("plugin.event", &json!({"id": "org.figcraft.tools.grid-cleanup", "control": "apply"})).unwrap();
+    assert_eq!(apply_res["output"]["changed"], 1);
+
+    let doc = s.doc().unwrap();
+    assert_eq!(doc.variables.collections.len(), 1);
+    assert_eq!(doc.variables.variables.len(), 3);
+    assert!(doc.variables.variables.iter().any(|v| v.name == "step-4/value-16"));
+    assert_eq!(doc.node(id).unwrap().layout.as_ref().unwrap().padding, [16.0, 16.0, 16.0, 16.0]);
+
+    // 5. One undo restores pre-apply document including tokens
+    assert!(s.undo().unwrap());
+    assert_eq!(snapshot(&s), before_apply);
+    assert!(s.doc().unwrap().variables.collections.is_empty());
+
+    // 6. Direct headless apply
+    s.set_selection(vec![id]);
+    let headless = s
+        .execute(
+            "plugin.run",
+            &json!({
+                "id": "org.figcraft.tools.grid-cleanup",
+                "command": "apply",
+                "params": {
+                    "step": "8",
+                    "padding": true
+                }
+            }),
+        )
+        .unwrap();
+    assert_eq!(headless["output"]["changed"], 1);
+    assert_eq!(s.doc().unwrap().node(id).unwrap().layout.as_ref().unwrap().padding, [16.0, 16.0, 16.0, 16.0]);
+
+    // 7. One undo restores pre-apply document
+    assert!(s.undo().unwrap());
+    assert_eq!(snapshot(&s), before_apply);
+}

@@ -146,3 +146,49 @@ Image Trace converts bitmap images into editable vector layers or isolated maske
 - Cell-boundary paths have no curve smoothing in v1 (pixel-exact vector boundaries).
 - Transparent/empty traces produce no nodes and report as skipped.
 
+## Grid Cleanup
+
+**Plugin ID:** `org.figcraft.tools.grid-cleanup`  
+**Package:** `plugins/examples/grid-cleanup`  
+**Command:** `arrange.snapToGrid`  
+**Manifest:** `grid_cleanup.wasm` (API 2)
+
+### Intent & Behavior
+
+Grid Cleanup snaps layer dimensions, positions, auto-layout padding, gaps, and corner radii to a 4px or 8px grid using nearest-neighbor rounding (ties round away from zero).
+
+- **Position Snapping:** Snaps local/frame-relative coordinates (disabled by default; respects auto-layout flow children).
+- **Dimension Snapping:** Snaps width and height (disabled by default; respects Hug/Fill sizing and minimum dimensions).
+- **Auto Layout Gaps & Padding:** Snaps main and cross gaps (respects auto-distributed SpaceBetween/SpaceAround gaps) and 4-way padding (enabled by default).
+- **Corner Radii:** Snaps per-corner radii (enabled by default).
+- **Token Binding:** Optionally binds snapped scalar values to reusable Number tokens in an owned variable collection `FigCraft / Grid Cleanup`. Tokens are shared across layers for equal values.
+- **Safe Binding Replacement:** Leaves existing variable bindings untouched unless `replaceBindings: true` is explicitly passed.
+
+### Panel Controls
+
+- **Grid step:** `4` or `8` (default: `4`).
+- **Include descendants:** Checkbox (default: `false`).
+- **Positions:** Checkbox (default: `false`).
+- **Dimensions:** Checkbox (default: `false`).
+- **Padding:** Checkbox (default: `true`).
+- **Gaps:** Checkbox (default: `true`).
+- **Corner radii:** Checkbox (default: `true`).
+- **Bind to owned variables:** Checkbox (default: `false`).
+- **Replace existing bindings:** Checkbox (default: `false`).
+- **Apply / Close:** Triggers or dismisses panel.
+
+### Headless & CLI Contract
+
+```json
+{"command": "arrange.snapToGrid", "params": {"ids": [12], "step": 4, "descendants": false, "properties": {"positions": false, "dimensions": false, "padding": true, "gaps": true, "radii": true}, "bindVariables": false, "replaceBindings": false}}
+```
+
+### Limitations & Protection
+
+- Design documents only; board documents return a Disabled error.
+- Flow-child positions, text auto-resize, and Hug/Fill sizing are protected from accidental fixed snaps.
+- Auto-distributed gaps are protected from being converted to fixed values.
+- Maximum 512 new tokens created per invocation; maximum 4,096 tokens in owned collection; maximum 64 modes per collection.
+- Reusable tokens are tracked using strict metadata markers (`figcraft.tools.grid-cleanup/v1;step=...;value=...`).
+
+

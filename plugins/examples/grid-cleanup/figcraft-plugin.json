@@ -1,0 +1,30 @@
+{
+  "id": "org.figcraft.tools.grid-cleanup",
+  "name": "Grid Cleanup",
+  "version": "1.0.0",
+  "description": "Round sizes, positions, paddings, gaps, and corner radii to a 4px or 8px grid.",
+  "main": "grid_cleanup.wasm",
+  "api": 2,
+  "permissions": {
+    "access": "write",
+    "commands": ["arrange.snapToGrid"]
+  },
+  "commands": [
+    { "id": "panel", "label": "Grid Cleanup…" },
+    {
+      "id": "apply",
+      "label": "Snap to Grid",
+      "params": [
+        { "name": "step", "label": "Grid step", "type": "text", "default": "4" },
+        { "name": "descendants", "label": "Include descendants", "type": "boolean", "default": false },
+        { "name": "positions", "label": "Positions", "type": "boolean", "default": false },
+        { "name": "dimensions", "label": "Dimensions", "type": "boolean", "default": false },
+        { "name": "padding", "label": "Padding", "type": "boolean", "default": true },
+        { "name": "gaps", "label": "Gaps", "type": "boolean", "default": true },
+        { "name": "radii", "label": "Corner radii", "type": "boolean", "default": true },
+        { "name": "bindVariables", "label": "Bind to owned variables", "type": "boolean", "default": false },
+        { "name": "replaceBindings", "label": "Replace existing bindings", "type": "boolean", "default": false }
+      ]
+    }
+  ]
+}

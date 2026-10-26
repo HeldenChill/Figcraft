@@ -401,6 +401,8 @@ image sizes) and refuses it if anything is off.
   fixed corners and stretching edges. See [Plugin tools](plugin-tools.md).
 - **Image Trace** (`image-trace`, API 2): traces bitmap artwork to editable vector paths or isolated
   masks. See [Plugin tools](plugin-tools.md).
+- **Grid Cleanup** (`grid-cleanup`, API 2): snaps layer sizes, positions, paddings, gaps, and corner
+  radii to a 4px or 8px grid with optional variable binding. See [Plugin tools](plugin-tools.md).
 
 `cargo xtask plugins` (part of `cargo xtask wasm` and `cargo xtask ci`; it needs the
 `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`) checks, tests and

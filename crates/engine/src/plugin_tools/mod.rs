@@ -5,6 +5,8 @@ use crate::spec;
 
 pub mod contours;
 pub mod fit;
+pub mod grid;
+pub mod grid_variables;
 pub mod nine_slice;
 pub mod quantize;
 pub mod targets;
@@ -31,6 +33,13 @@ pub(crate) fn specs() -> Vec<crate::cmd::CommandSpec> {
             "{ids?, mode?, threshold?, invert?, colors?, alphaCutoff?, resolution?, output?}",
             true,
             trace::trace
+        ),
+        spec!(
+            "arrange.snapToGrid",
+            "Snap properties to 4px/8px grid",
+            "{ids?, step? (4|8), descendants?, properties?, bindVariables?, replaceBindings?}",
+            true,
+            grid::snap_to_grid
         ),
     ]
 }
