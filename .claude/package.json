@@ -1,0 +1,4 @@
+{
+  "description": "Keeps the shared CommonJS hooks and tools under .claude working when the project root package.json sets \"type\": \"module\".",
+  "type": "commonjs"
+}

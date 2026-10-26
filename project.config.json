@@ -1,0 +1,8 @@
+﻿{
+    "PROJECT_NAME":  "FigCraft",
+    "L5_ASSEMBLY":  "figcraft",
+    "L5_PATH":  "crates/",
+    "LOCATOR_SERVICE":  "not applicable",
+    "INTEGRITY_CHECK":  "not applicable",
+    "UNITY_VERSION":  "not applicable"
+}
