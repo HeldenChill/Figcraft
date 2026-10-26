@@ -183,10 +183,52 @@ Lessons from this handoff's self-review:
 - Nine-slice crop composition order and transparent Fit margins need pixel tests.
 - An undersized center can collapse to zero before an incremental resize repair;
   generated cell geometry must be rebuilt from validated insets when settling.
+- Review every mutation route that can change generated geometry. The Scale tool
+  scales frame dimensions, cells and native minimums; if plugin metadata stores
+  fixed borders, scale that metadata too, including for nested generated panels.
+- Validate persisted plugin metadata as untrusted input. Finite values can still
+  overflow when summed; bound each inset and its combined minimum before
+  normalization. Post-command normalization may run after the command's finite
+  geometry check, so invalid metadata can otherwise persist infinite dimensions.
+- Check numeric thresholds at downstream consumers. `ImagePaint::effective_crop`
+  ignores near-zero crop coefficients, so a valid tiny nine-slice inset can render
+  with Fill fallback unless composed mappings are supported or rejected early.
+- Matrix assertions do not prove pixel output. Render synthetic Fit and Crop
+  fixtures with transparency and quarter-turn rotation; assert borders and center
+  sample expected source regions. Add coverage for copy, resize and scale paths.
 - Grid cleanup needs alias-binding checks and final normalized-state tests.
 - Large trace inputs need decoder limits before allocation, not only a 512px output cap.
 
-## 8. Record and verify knowledge without disturbing implementation
+## 8. Review completed plugin arcs
+
+Treat “done” as a claim to verify against fresh repository state. Read the full
+recent log, working tree, plugin registry/package list and roadmap. A clean tree,
+plan checkboxes or a user completion message do not establish that all planned
+plugins landed. Keep status reports time-bounded and identify what was visible at
+the check; do not infer another executor's live process from file timestamps.
+
+Review one feature arc at a time against its approved child plan and commit range.
+Inspect the command, plugin adapter, manifest, actual WASM package, tests, docs and
+all surrounding engine paths that can mutate the affected data. Check the user
+visible operation through explicit command, panel event, undo/redo, resize, scale,
+copy, normalization and save/load where applicable. Verify reported risks with a
+concrete trigger and call order before assigning severity. Separate correctness
+findings from plan gaps such as missing rendered tests.
+
+For Nine Slice, these fresh focused checks passed on 2026-10-26:
+
+```powershell
+$env:Path = "$env:USERPROFILE\.cargo\bin;$env:Path"
+cargo test --locked -p figcraft-engine plugin_tools_tests::nine_slice -- --nocapture
+cargo test --locked -p figcraft-engine plugin_tools_tests::runtime::built_nine_slice -- --ignored --exact --nocapture
+```
+
+They passed 12 command/helper tests and one ignored test loading the built WASM.
+Focused tests do not replace `cargo xtask ci`, GUI installation, a screenshot read,
+or pixel tests. Record only checks actually run; this review did not run full CI
+or a GUI screenshot.
+
+## 9. Record and verify knowledge without disturbing implementation
 
 Append dated session outcomes; keep bug lifecycle authority in the domain bug
 collection and reusable procedures here. Register each new top-level `mem-*.md`

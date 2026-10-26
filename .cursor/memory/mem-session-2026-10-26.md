@@ -124,6 +124,33 @@ remain in the sibling repo. Do not infer enduring preferences from one session.
     added the confirmed renderer bug record. Gemini feature completion, runtime
     tests, installation and passing CI remain unverified here.
 
+18. User later asked for a progress check while Gemini worked. At 16:30 local,
+    Git showed Fit Images and Nine Slice committed and Image Trace files changing;
+    Grid Cleanup implementation was not yet visible. This was a point-in-time
+    workspace observation, not a statement about Gemini's live status. User then
+    said all work was done and requested a Nine Slice review. Review scope was
+    `1eed2407..ee44b677` with current HEAD `72233901`; later commits did not alter
+    Nine Slice. Focused checks passed freshly:
+    `cargo test --locked -p figcraft-engine plugin_tools_tests::nine_slice -- --nocapture`
+    (12 passed) and
+    `cargo test --locked -p figcraft-engine plugin_tools_tests::runtime::built_nine_slice -- --ignored --exact --nocapture`
+    (1 passed, real built WASM). Cargo was absent from the tool shell PATH; prepend
+    `$env:USERPROFILE\.cargo\bin` in PowerShell. Full CI and GUI screenshot checks
+    were not run as part of this review.
+
+    Read-only review found three behavior defects to fix before calling Nine Slice
+    ready: Scale tool scales frame and cells but stored inset metadata remains at
+    original values, so fixed borders fail to scale proportionally; finite but
+    enormous metadata insets can overflow minima during post-validation
+    normalization and persist infinite geometry; and legal tiny insets can create
+    crop coefficients below `ImagePaint::effective_crop`'s acceptance threshold,
+    so renderer falls back to Fill. Review also noted missing rendered pixel tests
+    for Fit/Crop transparency and quarter-turn rotation. No source fixes were made.
+    Preserve these as review findings, not verified fixes. Working tree was clean
+    at inspection; observed plugin commits were Fit Images `1eed2407`, Nine Slice
+    `ee44b677`, and Image Trace `72233901`. Do not infer Grid Cleanup landed from
+    the user's phrase “all done”; inspect fresh Git state before claiming it.
+
 ## Continuation lessons
 
 - A large file that closes the GUI can parse successfully; compare headless info
@@ -145,6 +172,19 @@ remain in the sibling repo. Do not infer enduring preferences from one session.
   must be deliberately shared. Do not assume another model's checkout has them.
 - With Gemini implementing, avoid competing source edits, global sync pulls,
   unrelated staging/commits and redundant builds during a knowledge-only update.
+- A completion report and a clean working tree do not prove every planned arc
+  landed. Check the full recent commit log, plugin registry/package list and
+  roadmap/docs before translating “all done” into a count of delivered plugins.
+- For Nine Slice, review generated geometry after every supported mutation path,
+  especially `transform.scale`, nested scaling, manual resize and normalization.
+  Metadata-backed minima must be finite and bounded before post-command
+  normalization, because finite-geometry validation runs before normalization.
+- `ImagePaint::effective_crop` treats near-zero crop coefficients as absent.
+  Composing cell crops must preserve valid thin border mappings or reject them
+  before mutation; cover this with rendered pixel assertions, not matrix-only tests.
+- Focused passing unit and real built-WASM tests establish those paths only.
+  They do not establish full CI, GUI installation, visual quality or platform
+  behavior; record each evidence level separately.
 
 ## Current unresolved boundaries
 

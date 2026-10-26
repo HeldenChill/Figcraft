@@ -1,7 +1,7 @@
 # FigCraft import, renderer diagnosis and plugin handoff
 
-Observed and discussed: 2026-10-26. This records completed evidence and approved
-planning, not a claim about the current app process or Gemini's implementation.
+Observed and discussed: 2026-10-26. This records dated evidence and approved
+planning; current app/process state still requires fresh inspection.
 
 ## Figma interchange
 
@@ -85,7 +85,9 @@ order below differs to establish shared interfaces with the smallest operation.
 Owner approved the written design, requested the writing-plans skill for a detailed
 Gemini implementation handoff, then stated Gemini was working. Preserve that
 assignment: do not launch a competing implementation or rewrite its source.
-No subagents were requested or spawned in this session.
+No implementation subagents were requested. The later explicit code-review skill
+invocation required one read-only reviewer for Nine Slice; no implementation was
+delegated here.
 
 Local files, intentionally named under project plan rules:
 
@@ -98,8 +100,8 @@ Local files, intentionally named under project plan rules:
 
 As observed, `.gitignore` pattern `plans/` ignores `.cursor/plans` too. Another Git
 checkout will not receive these six local documents unless explicitly shared or
-staged. Source tests and a `.gitignore` edit appeared after Gemini began; their
-contents, completion and passing status were not reviewed in this memory update.
+staged. Source tests and a `.gitignore` edit appeared after Gemini began; inspect
+fresh commit/worktree state before deciding whether they landed.
 
 | Planned plugin | Stable plugin ID | Planned engine command |
 |---|---|---|
@@ -135,5 +137,29 @@ verified by this agent. Plan integrity/link checks passed over six documents and
   overridden by bindings or Hug/Fill/automatic spacing.
 - Plugin milestone in inspected `docs/roadmap.md` is M11; M9 is multiplayer.
 
-These are dated observations. Gemini may now be changing the cited files; fresh
-source and implementation evidence govern future answers.
+## Gemini progress check and Nine Slice review
+
+At 16:30 local on 2026-10-26, the working tree showed Fit Images and Nine Slice
+committed, Image Trace files changing and no visible Grid Cleanup implementation.
+Later the tree was clean at HEAD `72233901`; visible plugin commits were Fit Images
+`1eed2407`, Nine Slice `ee44b677`, and Image Trace `72233901`. This conflicts with
+the user's “all done” phrasing if taken to mean all four tools, so do not infer
+Grid Cleanup delivery without checking newer state or asking what completion means.
+
+Read-only Nine Slice review covered `1eed2407..ee44b677` plus current engine paths.
+Fresh tests passed: 12 focused Nine Slice tests and one ignored runtime test that
+loaded the built WASM. Cargo required prepending `$env:USERPROFILE\.cargo\bin` to
+the PowerShell PATH. Full CI and screenshot checks were not run. Findings, no fixes:
+
+| Severity | Trigger and effect |
+|---|---|
+| P1 | `parse_insets_metadata` accepts huge finite values such as `1e308`; after `node.set` changes dimensions, normalization sums them to infinity and persists invalid geometry after finite checks already ran. Bound each inset and sum; add regression coverage. |
+| P2 | `transform.scale` scales frame/cells/native minima but not inset plugin metadata; normalization rebuilds cells with old borders, distorting the artwork. Scale metadata too, including nested panels. |
+| P2 | Legal tiny insets can make composed crop coefficients smaller than `ImagePaint::effective_crop` accepts; renderer drops the crop and falls back to Fill. Support these mappings or reject them before mutation. |
+
+Rendered pixel tests also remain absent for Fit/Crop transparency and quarter-turn
+rotation; matrix tests alone do not establish sampling. No source changes were made
+during review. These findings are unresolved until fresh fixes and regressions land.
+
+These are dated observations. Fresh source and implementation evidence govern
+future answers.
