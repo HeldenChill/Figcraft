@@ -256,3 +256,29 @@ fn trace_empty_and_protected() {
     assert_eq!(res_locked["created"].as_array().unwrap().len(), 0);
     assert_eq!(res_locked["skipped"].as_u64().unwrap(), 1);
 }
+
+#[test]
+fn trace_batch_places_each_result_above_its_live_source() {
+    for output in ["vectors", "mask"] {
+        for reverse in [false, true] {
+            let mut s = Session::new();
+            let a = image_layer(&mut s, 2, 2, &[[0, 0, 0, 255]; 4]);
+            let b = image_layer(&mut s, 2, 2, &[[0, 0, 0, 255]; 4]);
+            let ids = if reverse { vec![b, a] } else { vec![a, b] };
+            let before = snapshot(&s);
+            let out = s.execute("image.trace", &json!({"ids": ids, "output": output})).unwrap();
+            for (i, src) in ids.iter().enumerate() {
+                let result = crate::params::id_of(&out["created"][i]).unwrap();
+                let doc = s.doc().unwrap();
+                let parent = doc.node(doc.node(*src).unwrap().parent.unwrap()).unwrap();
+                let pos = parent.children.iter().position(|id| id == src).unwrap();
+                assert_eq!(parent.children.get(pos + 1), Some(&result));
+            }
+            let after = snapshot(&s);
+            assert!(s.undo().unwrap());
+            assert_eq!(snapshot(&s), before);
+            assert!(s.redo().unwrap());
+            assert_eq!(snapshot(&s), after);
+        }
+    }
+}

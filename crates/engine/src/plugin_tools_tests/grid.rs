@@ -54,6 +54,74 @@ fn grid_rounding_edges() {
 }
 
 #[test]
+fn grid_fixed_children_snap_independently_of_track_sizing() {
+    for absolute in [false, true] {
+        for fill_tracks in [false, true] {
+            let mut s = Session::new();
+            let p = s.execute("frame.create", &json!({"width": 200, "height": 200})).unwrap();
+            let parent = crate::params::id_of(&p["id"]).unwrap();
+            let r = s.execute("shape.rectangle", &json!({"width": 21, "height": 33})).unwrap();
+            let id = crate::params::id_of(&r["id"]).unwrap();
+            {
+                let doc = s.doc_mut().unwrap();
+                let tracks = if fill_tracks { vec![] } else { vec![figcraft_doc::GridTrack::fixed(100.0)] };
+                doc.get_mut(parent).unwrap().layout = Some(AutoLayout {
+                    mode: figcraft_doc::LayoutMode::Grid,
+                    column_tracks: tracks.clone(),
+                    row_tracks: tracks,
+                    ..Default::default()
+                });
+                doc.reparent(id, parent, None).unwrap();
+                doc.get_mut(id).unwrap().child_layout.absolute = absolute;
+            }
+            let before = snapshot(&s);
+            let out = s
+                .execute(
+                    "arrange.snapToGrid",
+                    &json!({"ids": [id], "properties": {
+                        "dimensions": true, "positions": false, "padding": false, "gaps": false, "radii": false
+                    }}),
+                )
+                .unwrap();
+            assert_eq!(out["protectedFields"], 0);
+            let n = s.doc().unwrap().node(id).unwrap();
+            assert_eq!((n.width, n.height), (20.0, 32.0));
+            assert!(s.undo().unwrap());
+            assert_eq!(snapshot(&s), before);
+        }
+    }
+}
+
+#[test]
+fn grid_fill_child_dimensions_stay_layout_controlled() {
+    let mut s = Session::new();
+    let p = s.execute("frame.create", &json!({"width": 201, "height": 203})).unwrap();
+    let parent = crate::params::id_of(&p["id"]).unwrap();
+    let r = s.execute("shape.rectangle", &json!({"width": 21, "height": 33})).unwrap();
+    let id = crate::params::id_of(&r["id"]).unwrap();
+    {
+        let doc = s.doc_mut().unwrap();
+        doc.get_mut(parent).unwrap().layout = Some(AutoLayout { mode: figcraft_doc::LayoutMode::Grid, ..Default::default() });
+        doc.reparent(id, parent, None).unwrap();
+        let n = doc.get_mut(id).unwrap();
+        n.child_layout.sizing_h = Sizing::Fill;
+        n.child_layout.sizing_v = Sizing::Fill;
+    }
+    let before = snapshot(&s);
+    let out = s
+        .execute(
+            "arrange.snapToGrid",
+            &json!({"ids": [id], "properties": {
+                "dimensions": true, "positions": false, "padding": false, "gaps": false, "radii": false
+            }}),
+        )
+        .unwrap();
+    assert_eq!(out["protectedFields"], 2);
+    assert_eq!(out["changed"], 0);
+    assert_eq!(snapshot(&s), before);
+}
+
+#[test]
 fn grid_defaults_leave_geometry() {
     let mut s = Session::new();
     let r = s.execute("shape.rectangle", &json!({"x": 13, "y": 15, "width": 101, "height": 103})).unwrap();

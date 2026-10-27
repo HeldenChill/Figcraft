@@ -14,6 +14,7 @@ pub(crate) const NINE_SLICE_KEY: &str = "figcraft.tools.nineSlice";
 pub(crate) const NINE_SLICE_CELL_KEY: &str = "figcraft.tools.nineSliceCell";
 
 const CELL_NAMES: [&str; 9] = ["Top left", "Top", "Top right", "Left", "Center", "Right", "Bottom left", "Bottom", "Bottom right"];
+const MAX_INSET: f64 = 1_000_000.0;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct SliceInsets {
@@ -51,7 +52,12 @@ pub(crate) fn parse_insets_metadata(node: &Node) -> Option<SliceInsets> {
     if !top.is_finite() || !right.is_finite() || !bottom.is_finite() || !left.is_finite() {
         return None;
     }
-    if top <= 0.0 || right <= 0.0 || bottom <= 0.0 || left <= 0.0 {
+    // Plugin data can come from imported files or node.set, bypassing command parsing.
+    // Validate before normalization computes minima after the finite-geometry guard.
+    if [top, right, bottom, left].iter().any(|v| *v <= 0.0 || *v > MAX_INSET)
+        || !(left + right + 1e-6).is_finite()
+        || !(top + bottom + 1e-6).is_finite()
+    {
         return None;
     }
     Some(SliceInsets { top, right, bottom, left })
@@ -66,6 +72,17 @@ pub(crate) fn affine_mul(m: [f64; 6], q: [f64; 6]) -> [f64; 6] {
         m[0] * q[4] + m[2] * q[5] + m[4],
         m[1] * q[4] + m[3] * q[5] + m[5],
     ]
+}
+
+/// Scale physical border units with the shared Scale tool, including nested panels.
+pub(crate) fn scale_metadata(node: &mut Node, factor: f64) -> Result<()> {
+    let Some(insets) = parse_insets_metadata(node) else { return Ok(()) };
+    let scaled = [insets.top, insets.right, insets.bottom, insets.left].map(|v| v * factor);
+    if scaled.iter().any(|v| !v.is_finite() || *v <= 0.0 || *v > MAX_INSET) {
+        return Err(bad("transform.scale", "scaled nine-slice insets out of bounds"));
+    }
+    node.plugin_data.insert(NINE_SLICE_KEY.into(), serde_json::json!({"version": 1, "insets": scaled}).to_string());
+    Ok(())
 }
 
 pub(crate) fn slice_paints(
@@ -126,6 +143,11 @@ pub(crate) fn slice_paints(
             let mut cp = paint.clone();
             cp.scale_mode = ImageScaleMode::Crop;
             cp.crop = Some(cell_crop);
+            // The renderer falls back to Fill for unsupported crop transforms.
+            // Refuse the whole operation before creating nodes instead of losing sampling.
+            if cp.effective_crop(iw, ih, cw, ch) != cell_crop {
+                return Err(bad("image.nineSlice", "slice crop is too small or invalid to render; adjust insets or source crop"));
+            }
             out.push((Rect::new(cx, cy, cx + cw, cy + ch), cp));
         }
     }

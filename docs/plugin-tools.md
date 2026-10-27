@@ -68,6 +68,7 @@ Nine Slice slices an image rectangle into a 3x3 resizable frame consisting of 9 
 - Sets up standard FigCraft pin constraints on all 9 children.
 - Attaches `figcraft.tools.nineSlice` metadata to the parent frame and `figcraft.tools.nineSliceCell` to the children.
 - Enforces minimum frame size (`left + right`, `top + bottom`), guarding against undersizing during manual resize or interactive drag.
+- Scale scales the stored border widths too, including panels inside scaled frames or groups. Later resizing preserves those scaled borders.
 
 ### Panel Controls
 
@@ -102,6 +103,8 @@ Result returns a standardized `ToolReport`:
 - Source layer must be exactly one rectangle with exactly one visible image fill (`Fill`, `Fit`, or `Crop`).
 - Layers with visible strokes, effects, corner radii, or masks are rejected with descriptive errors.
 - Insets must satisfy `left + right < width` and `top + bottom < height`.
+- Persisted insets outside the positive finite range up to 1,000,000 are ignored. Scale refuses border widths outside that range.
+- Crops too small for the renderer to preserve are rejected before any output is created; adjust the insets or source crop.
 - Protected or locked layers return a BadParams error.
 
 ## Image Trace

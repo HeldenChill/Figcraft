@@ -2,7 +2,7 @@
 
 **Stage: alpha** · next: beta, ~26 points and ~162–292 h away (one Opus 5.5 agent; ~33–67 h wall-clock with 5 agents)
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-26 · **Change:** minor (Nine Slice plugin (M11): adds `org.figcraft.tools.nine-slice` WASM plugin and `image.nineSlice` engine command; slices an image rectangle into a 3x3 resizable panel with fixed corners, stretching edges, and minimum dimension guards; earlier changes are in the revision history below) · **Target:** Figma Design (desktop app 126.10.7)
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-27 · **Change:** minor (M11 plugin review fixes: bounded Nine Slice metadata, scaled borders, crop rejection, live trace stacking and Fixed grid-child cleanup. Estimates unchanged; earlier changes are in revision history) · **Target:** Figma Design (desktop app 126.10.7)
 
 FigCraft is a clean-room, open-source, pure-Rust reimplementation of the Figma design workflow,
 native on macOS, Windows, Linux and FreeBSD and in the browser, fully drivable by agents through
@@ -132,6 +132,7 @@ Ranked; detail and milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Progress log
 
+- **2026-10-27**: M11: fixed five plugin review bugs with regression coverage; see [development log](docs/devlog.md).
 - **2026-10-26** · Game UI plugin pack (M11): Fit Images (`org.figcraft.tools.fit-images`), Nine Slice (`org.figcraft.tools.nine-slice`), and Image Trace (`org.figcraft.tools.image-trace`) plugins and engine commands (`image.fit`, `image.nineSlice`, `image.trace`). Fit Images toggles between fit/fill across selections non-destructively; Nine Slice creates 9-slice resizable panels with pin constraints; Image Trace performs deterministic monochrome/color vector silhouette tracing and isolated masking with closed cell-boundary contour walking.
 - **2026-10-25** · egui 0.37 capture lifecycle: screenshots with hidden or unknown visibility queue, request a hidden paint, and expire after 60 seconds if no capture arrives (headless-tested contract). Logic-only edits, saves and inspection continue while hidden. Native visible GUI and forced hidden-window paint, browser and Wayland behavior remain unqualified; parity percentages are unchanged.
 - **2026-10-24** · Open, Save and the folder dialogs start in the folder of the last file or folder picked in the run (#1290): the Linux portal does not remember it between dialogs as the macOS and Windows panels do. A folder deleted since falls back to the system's choice. No numbers change.
@@ -339,6 +340,7 @@ Ranked; detail and milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-27 | minor | M11 plugin review fixes: bounded Nine Slice metadata, scaled borders, crop rejection, live trace stacking and Fixed grid-child cleanup. Estimates unchanged |
 | 2026-10-26 | minor | Nine Slice plugin (M11): adds `org.figcraft.tools.nine-slice` WASM plugin and `image.nineSlice` engine command; slices an image rectangle into a 3x3 resizable frame with 9 child rectangles sharing image hash, fixed corners, stretching edges, metadata tags, and resize protection. Numbers unchanged |
 | 2026-10-26 | minor | Fit Images plugin (M11): adds `org.figcraft.tools.fit-images` WASM plugin and `image.fit` engine command; fits image-filled layers to intrinsic image dimensions with fill or fit mode, aspect ratio lock, and single-step undo. Numbers unchanged |
 | 2026-10-25 | minor | egui 0.37 capture lifecycle: screenshots with hidden or unknown visibility queue, request a hidden paint, and expire after 60 seconds if no capture arrives (headless-tested contract). Logic-only edits, saves and inspection continue while hidden. Native visible GUI and forced hidden-window paint, browser and Wayland behavior remain unqualified; parity percentages are unchanged. |

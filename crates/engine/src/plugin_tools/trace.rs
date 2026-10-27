@@ -40,9 +40,8 @@ fn parse_u32(p: &Value, key: &str, default: u32, min: u32, max: u32) -> Result<u
 }
 
 struct SourceTrace {
-    _src_id: NodeId,
+    src_id: NodeId,
     parent_id: NodeId,
-    insert_idx: usize,
     parent_is_auto_layout: bool,
     src_name: String,
     src_width: f64,
@@ -224,14 +223,11 @@ pub(crate) fn trace(s: &mut Session, p: &Value) -> Result<Value> {
 
         let parent_id = src.parent.unwrap_or_else(|| doc.first_open_page().unwrap_or(doc.pages[0]));
         let parent_node = doc.node(parent_id).ok_or_else(|| bad("parent missing"))?;
-        let src_index = parent_node.children.iter().position(|&c| c == src_id).unwrap_or(parent_node.children.len());
-        let insert_idx = src_index + 1;
         let parent_is_auto_layout = parent_node.layout.is_some();
 
         eligible_traces.push(SourceTrace {
-            _src_id: src_id,
+            src_id,
             parent_id,
-            insert_idx,
             parent_is_auto_layout,
             src_name: src.name.clone(),
             src_width: src.width,
@@ -254,6 +250,12 @@ pub(crate) fn trace(s: &mut Session, p: &Value) -> Result<Value> {
     let doc_mut = s.doc_mut()?;
 
     for t in eligible_traces {
+        // Earlier outputs may have shifted this source's sibling index.
+        let insert_idx = doc_mut
+            .node(t.parent_id)
+            .and_then(|parent| parent.children.iter().position(|&id| id == t.src_id))
+            .ok_or_else(|| bad("source missing from parent"))?
+            + 1;
         if output_str == "vectors" {
             let group_id = doc_mut.alloc_id();
             let mut group_node = Node::new(group_id, NodeKind::Group, format!("{} / Trace", t.src_name), t.src_width, t.src_height);
@@ -263,7 +265,7 @@ pub(crate) fn trace(s: &mut Session, p: &Value) -> Result<Value> {
                 group_node.child_layout.absolute = true;
             }
 
-            doc_mut.insert(group_node, t.parent_id, Some(t.insert_idx))?;
+            doc_mut.insert(group_node, t.parent_id, Some(insert_idx))?;
 
             for (idx, (rgba, net)) in t.vector_layers.into_iter().enumerate() {
                 let color_name = if mode_str == "monochrome" { "Silhouette".to_string() } else { format!("Color {idx}") };
@@ -286,7 +288,7 @@ pub(crate) fn trace(s: &mut Session, p: &Value) -> Result<Value> {
                 frame_node.child_layout.absolute = true;
             }
 
-            doc_mut.insert(frame_node, t.parent_id, Some(t.insert_idx))?;
+            doc_mut.insert(frame_node, t.parent_id, Some(insert_idx))?;
 
             if let Some(mask_net) = t.mask_network {
                 // Bottom child: vector mask

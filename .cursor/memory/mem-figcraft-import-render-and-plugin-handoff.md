@@ -167,3 +167,24 @@ passed on that basis. No Gemini process or Cargo build remained at final check.
 
 These are dated observations. Fresh source and implementation evidence govern
 future answers.
+
+## 2026-10-27 plugin review fixes
+
+Owner requested fixing all five findings after review of all four plugins.
+All five were reproduced with failing regressions before production changes.
+The three older Nine Slice findings and the new batch trace stacking and Fixed
+grid-child protection findings now have fixes and passing focused tests. Combined
+plugin tests passed 64 cases, including four actual packaged-WASM runtime cases.
+Read-only follow-up review found no blockers. Full CI and visual verification
+are recorded separately once finished; do not infer them from focused tests.
+
+Current lifecycle authority: [plugin tool bug records](bugs/mem-bugs-plugin-tools.md),
+BUG-0002 through BUG-0006. Tiny unsupported crops are refused atomically rather
+than widening the renderer's global numeric acceptance. Oversized persisted
+metadata is ignored; scaling valid metadata beyond its bounds returns an error.
+
+Final verification on 2026-10-27: `cargo xtask ci` exited 0, including workspace
+tests, WASM checks and rebuilt plugin packages. Fresh CLI export of an original
+synthetic panel was visually inspected: after 2x Scale and resize to 300x180,
+the corners and borders remain 30 units. Existing unrelated WASM warnings remain.
+Evidence: ignored `plan/plugin-review/ci.log` and `scaled-panel.png`.

@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet};
 
-use figcraft_doc::{ContentAlign, Document, LayoutMode, NodeId, NodeKind, Sizing, TextAutoResize};
+use figcraft_doc::{ContentAlign, Document, NodeId, NodeKind, Sizing, TextAutoResize};
 use figcraft_geom::Affine;
 use serde_json::Value;
 
@@ -72,54 +72,6 @@ fn supports_corners(kind: &NodeKind) -> bool {
             | NodeKind::Instance { .. }
             | NodeKind::Section { .. }
     )
-}
-
-fn is_grid_stretch_h(doc: &Document, id: NodeId) -> bool {
-    let Some(pid) = parent_id(doc, id) else {
-        return false;
-    };
-    let Some(parent) = doc.node(pid) else {
-        return false;
-    };
-    let Some(layout) = &parent.layout else {
-        return false;
-    };
-    if layout.mode != LayoutMode::Grid {
-        return false;
-    }
-    let Some(child) = doc.node(id) else {
-        return false;
-    };
-    let col = child.child_layout.grid_column.unwrap_or(0) as usize;
-    if let Some(track) = layout.column_tracks.get(col) {
-        track.sizing == Sizing::Fill
-    } else {
-        true // missing tracks default to 1fr (Fill)
-    }
-}
-
-fn is_grid_stretch_v(doc: &Document, id: NodeId) -> bool {
-    let Some(pid) = parent_id(doc, id) else {
-        return false;
-    };
-    let Some(parent) = doc.node(pid) else {
-        return false;
-    };
-    let Some(layout) = &parent.layout else {
-        return false;
-    };
-    if layout.mode != LayoutMode::Grid {
-        return false;
-    }
-    let Some(child) = doc.node(id) else {
-        return false;
-    };
-    let row = child.child_layout.grid_row.unwrap_or(0) as usize;
-    if let Some(track) = layout.row_tracks.get(row) {
-        track.sizing == Sizing::Fill
-    } else {
-        true // missing tracks default to 1fr (Fill)
-    }
 }
 
 pub(crate) fn parse_options(p: &Value) -> Result<GridOptions> {
@@ -245,7 +197,7 @@ pub(crate) fn plan_edits(doc: &Document, target_ids: &[NodeId], options: &GridOp
                     if let NodeKind::Text(t) = &n.kind {
                         t.auto_resize == TextAutoResize::WidthAndHeight
                     } else {
-                        is_grid_stretch_h(doc, id)
+                        false
                     }
                 }
             };
@@ -256,7 +208,7 @@ pub(crate) fn plan_edits(doc: &Document, target_ids: &[NodeId], options: &GridOp
                     if let NodeKind::Text(t) = &n.kind {
                         t.auto_resize == TextAutoResize::WidthAndHeight || t.auto_resize == TextAutoResize::Height
                     } else {
-                        is_grid_stretch_v(doc, id)
+                        false
                     }
                 }
             };

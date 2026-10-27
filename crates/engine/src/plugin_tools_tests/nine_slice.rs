@@ -250,6 +250,102 @@ fn slice_malformed_metadata_is_safe() {
 }
 
 #[test]
+fn slice_oversized_metadata_cannot_corrupt_geometry() {
+    for inset in [1e308, 1_000_001.0] {
+        let mut s = Session::new();
+        let out = s.execute("frame.create", &json!({"width": 100, "height": 100})).unwrap();
+        let id = crate::params::id_of(&out["id"]).unwrap();
+        s.execute(
+            "node.set",
+            &json!({"ids": [id], "props": {
+                "width": 120,
+                "pluginData": {"figcraft.tools.nineSlice": {"version": 1, "insets": [inset, inset, inset, inset]}}
+            }}),
+        )
+        .unwrap();
+        let node = s.doc().unwrap().node(id).unwrap();
+        assert_eq!((node.width, node.height), (120.0, 100.0));
+        assert!(crate::plugin_tools::nine_slice::minimum_size(node).is_none());
+        let saved = figcraft_format::save_bytes(s.doc().unwrap(), None).unwrap();
+        let (reopened, _) = figcraft_format::load_bytes(&saved).unwrap();
+        assert_eq!(reopened.node(id).unwrap().width, 120.0);
+    }
+}
+
+#[test]
+fn slice_scale_updates_borders_directly_and_nested() {
+    for nested in [false, true] {
+        let mut s = Session::new();
+        let pixels: Vec<_> = (0..10_000).map(|i| if i % 100 < 10 && i / 100 < 10 { [255, 0, 0, 255] } else { [0, 0, 255, 255] }).collect();
+        let src = image_layer(&mut s, 100, 100, &pixels);
+        let out = s.execute("image.nineSlice", &json!({"ids": [src], "left": 10, "right": 10, "top": 10, "bottom": 10})).unwrap();
+        let frame = crate::params::id_of(&out["created"][0]).unwrap();
+        let target = if nested {
+            let parent = s.execute("frame.create", &json!({"width": 300, "height": 300})).unwrap();
+            let parent = crate::params::id_of(&parent["id"]).unwrap();
+            s.execute("node.reparent", &json!({"ids": [frame], "parent": parent})).unwrap();
+            parent
+        } else {
+            frame
+        };
+        let before = snapshot(&s);
+        s.execute("transform.scale", &json!({"ids": [target], "factor": 2})).unwrap();
+        let scaled = snapshot(&s);
+        let n = s.doc().unwrap().node(frame).unwrap();
+        let corner = s.doc().unwrap().node(n.children[0]).unwrap();
+        assert_eq!((corner.width, corner.height), (20.0, 20.0));
+        let insets = crate::plugin_tools::nine_slice::parse_insets_metadata(n).unwrap();
+        assert_eq!(insets.left, 20.0);
+        assert!(s.undo().unwrap());
+        assert_eq!(snapshot(&s), before);
+        assert!(s.redo().unwrap());
+        assert_eq!(snapshot(&s), scaled);
+        s.execute("node.set", &json!({"ids": [frame], "props": {"width": 300, "height": 300}})).unwrap();
+        let n = s.doc().unwrap().node(frame).unwrap();
+        let corner = s.doc().unwrap().node(n.children[0]).unwrap();
+        assert_eq!((corner.width, corner.height), (20.0, 20.0));
+        let rendered = figcraft_render::render_node(s.doc().unwrap(), frame, 1.0).unwrap();
+        let red = rendered.pixel(15, 15).unwrap();
+        assert_eq!((red.red(), red.green(), red.blue(), red.alpha()), (255, 0, 0, 255));
+        let blue = rendered.pixel(25, 25).unwrap();
+        assert_eq!((blue.red(), blue.green(), blue.blue(), blue.alpha()), (0, 0, 255, 255));
+    }
+}
+
+#[test]
+fn slice_scale_out_of_range_rolls_back() {
+    let mut s = Session::new();
+    let src = image_layer(&mut s, 3, 3, &[[255, 0, 0, 255]; 9]);
+    let out = s.execute("image.nineSlice", &json!({"ids": [src], "left": 1, "right": 1, "top": 1, "bottom": 1})).unwrap();
+    let frame = crate::params::id_of(&out["created"][0]).unwrap();
+    let before = snapshot(&s);
+    assert!(s.execute("transform.scale", &json!({"ids": [frame], "factor": 1_000_001})).is_err());
+    assert_eq!(snapshot(&s), before);
+}
+
+#[test]
+fn slice_unrenderable_crops_are_rejected_atomically() {
+    for zoomed in [false, true] {
+        let mut s = Session::new();
+        let src = image_layer(&mut s, 100, 100, &vec![[255, 0, 0, 255]; 10_000]);
+        let inset = if zoomed {
+            let n = s.doc_mut().unwrap().get_mut(src).unwrap();
+            if let figcraft_color::PaintKind::Image(img) = &mut n.fills[0].kind {
+                img.scale_mode = ImageScaleMode::Crop;
+                img.crop = Some([2e-9, 0.0, 0.0, 2e-9, 0.5, 0.5]);
+            }
+            10.0
+        } else {
+            49.99999999
+        };
+        let before = snapshot(&s);
+        let out = s.execute("image.nineSlice", &json!({"ids": [src], "left": inset, "right": inset, "top": 10, "bottom": 10}));
+        assert!(out.is_err(), "unsupported crop must not silently become Fill");
+        assert_eq!(snapshot(&s), before);
+    }
+}
+
+#[test]
 fn slice_nested_transform() {
     let mut s = Session::new();
     let parent = s.execute("frame.create", &json!({"width": 200, "height": 200, "rotation": 45})).unwrap();

@@ -416,6 +416,7 @@ pub fn scale_node(doc: &mut Document, id: NodeId, k: f64) -> Result<()> {
     };
     for (depth, i) in sub.iter().enumerate() {
         let n = doc.get_mut(*i)?;
+        crate::plugin_tools::nine_slice::scale_metadata(n, k)?;
         tiles(&mut n.fills);
         tiles(&mut n.strokes);
         let cl = &mut n.child_layout;
