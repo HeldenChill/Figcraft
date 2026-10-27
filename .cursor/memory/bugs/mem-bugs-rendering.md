@@ -1,13 +1,13 @@
 # Rendering bugs
 
-Project-owned. Last updated 2026-10-26. Historical evidence is not a current build
+Project-owned. Last updated 2026-10-27. Historical evidence is not a current build
 qualification. Local reproduction documents and screenshots are not committed.
 
 ## Ledger
 
 | ID | Type | Severity | Status | Title | Source | Evidence | Found | Updated | Resolution |
 |---|---|---|---|---|---|---|---|---|---|
-| BUG-0001 | bug | high | <span class="st-confirmed">CONFIRMED</span> | Hard Light image rendering panics in tiny-skia debug arithmetic and closes the app | Owner-reported .fig load; tiny-skia 0.12.0 lowp Hard Light and wide/u16x16_t.rs:172:17 | Local plan/setup/fig-gui-stderr.log; CLI import exit 0; workaround log and visually inspected screenshot | 2026-10-26 | 2026-10-26 | Temporary package-only overflow-check build override verified; permanent source fix and regression test pending |
+| BUG-0001 | bug | high | <span class="st-confirmed">CONFIRMED</span> | Hard Light image rendering panics in tiny-skia debug arithmetic and closes the app | Owner-reported .fig load; tiny-skia 0.12.0 lowp Hard Light and wide/u16x16_t.rs:172:17 | Ignored plan/setup and plan/crash-2026-10-27 logs; CLI import exit 0; workaround renders inspected | 2026-10-26 | 2026-10-27 | Temporary package-only overflow-check build override verified again; permanent source fix and regression test pending |
 
 ## Reproduction and limits
 
@@ -39,3 +39,7 @@ has landed before assuming this bug remains unchanged.
   dependency arithmetic path, and verified temporary rebuild workaround.
 - 2026-10-26: Recorded as confirmed rather than resolved; implementation of the
   four requested plugins was handed to Gemini separately.
+- 2026-10-27: Normal desktop rebuild reproduced same panic when owner opened
+  design. Scoped workaround rebuild rendered it. Interrupted Cargo build
+  corrupted only local incremental engine artifacts; `cargo clean -p
+  figcraft-engine`, then scoped rebuild, recovered. Root cause unresolved.

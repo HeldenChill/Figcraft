@@ -1,6 +1,6 @@
 # FigCraft import debugging and plugin handoff
 
-Project-owned; distilled from 2026-10-26. Use for `.fig` loading failures, renderer
+Project-owned; distilled from 2026-10-26 to 2026-10-27. Use for `.fig` loading failures, renderer
 diagnosis, screenshot evidence and handing original plugin work to another executor.
 Read current source/rules and the indexed topic memory before applying dated details.
 
@@ -267,3 +267,43 @@ Do not run shared pull/registry regeneration during another executor's work unle
 needed and coordinated; a new row in an existing memory/playbook index does not
 require replacing synchronized project configuration. Do not commit an active
 executor's unrelated source edits as part of a knowledge-only update.
+
+## 10. Recover legacy nine-slice/plugin data from owner `.fig` locally
+
+Use only when owner explicitly requests recovery of supplied file. This is not
+generic importer behavior. Keep recovered archive, decoded metadata, renders and
+native file under ignored `plan/recovery/`; never commit owner artwork, source
+blobs, screenshots or metadata.
+
+1. Separate import from rendering. If confirmed Hard Light signature recurs,
+   rebuild desktop only with scoped `tiny-skia` overflow checks disabled. Do not
+   normal-rebuild desktop afterward. If interrupted build causes anonymous LLVM
+   linker symbols, clean only `figcraft-engine` package artifacts, then rerun.
+2. Decode archive generically and inventory source nodes. Count `SLICE` nodes
+   separately from plugin data. Legacy nine-slice fragments do not prove export
+   Slice layer exists.
+3. Preserve raw plugin rows losslessly in passive namespaced metadata. Use exact
+   source REST ID to native node mapping captured during import; never name/path
+   match. Archive unmapped records rather than guess. Remove instrumentation.
+4. Do not force command-batch writes to protected imported library components.
+   For owner-local recovery, use offline native format writer on untouched native
+   baseline. Compare original nodes except `plugin_data`, plus styles, variables,
+   libraries and image index afterward.
+5. Preserve original screen/component hierarchy. Put opt-in editable tests on a
+   new page: instance/create then detach components; copy/paste ordinary frames.
+   Do not force native nine-slice tags onto complex/non-grid layouts.
+6. Validate regular 3x3 geometry before tagging. Derive insets from actual cells.
+   Pair source image from hidden whole-image fill on original root; fragments may
+   use independent cropped hashes, so crop inversion is invalid. Preserve source
+   paint transform, crop, rotation and filters when making paired fill visible.
+7. Verify native reopen has no repairs. Exercise resize, Scale, undo; run actual
+   packaged Nine Slice WASM with paired image; inspect `ui.render` PNGs.
+   `ui.screenshot` can stall while app responds, so timeout alone is not crash.
+8. Finish read-only validator for exact metadata, original-node preservation and
+   editable-copy counts. Record counts/dates/limits in memory; omit owner paths,
+   process IDs, ports and image data.
+
+Future importer design: export Slice support, arbitrary plugin-data preservation
+and automatic legacy nine-slice conversion are separate features. Generic import
+should preserve links/raw data by default. Conversion must be opt-in, bounded,
+and reject malformed or complex topology rather than silently change artwork.

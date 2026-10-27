@@ -1,6 +1,6 @@
 # FigCraft import, renderer diagnosis and plugin handoff
 
-Observed and discussed: 2026-10-26. This records dated evidence and approved
+Observed and discussed: 2026-10-26 to 2026-10-27. This records dated evidence and approved
 planning; current app/process state still requires fresh inspection.
 
 ## Figma interchange
@@ -188,3 +188,49 @@ tests, WASM checks and rebuilt plugin packages. Fresh CLI export of an original
 synthetic panel was visually inspected: after 2x Scale and resize to 300x180,
 the corners and borders remain 30 units. Existing unrelated WASM warnings remain.
 Evidence: ignored `plan/plugin-review/ci.log` and `scaled-panel.png`.
+
+## 2026-10-27 owner-file recovery
+
+Owner chose temporary renderer workaround first, to test four FigCraft plugins,
+rather than root tiny-skia change. Normal desktop rebuild reproduced BUG-0001;
+scoped tiny-skia override rebuild restored ability to open owner design. An
+interrupted build left corrupt incremental engine cache and anonymous LLVM linker
+symbol errors. `cargo clean -p figcraft-engine`, then same scoped build, repaired
+local cache. Workstation evidence, not portable build prescription.
+
+At owner request, one-off local recovery produced ignored native copy at
+`plan/recovery/Pet Vs Monster - UI.figcraft`. It preserves baseline import exactly
+outside `plugin_data`, adds original Figma plugin metadata under passive
+`recovered.figma.*` keys, and adds page `Recovered nine-slice - editable tests`.
+Page contains 90 detached/copy-based editable panels; 70 have validated native
+FigCraft nine-slice tags and paired whole source images for testing; 20 complex
+layouts remain ordinary editable frames.
+
+Source archive had no `SLICE` export layers. Relevant legacy metadata used
+empty-plugin-id keys `9slice-type` and `9slice-sliceData`: 522 origins (88
+components, 431 instances, 3 frames) and 792 fragment rectangles. Original
+panels retain hidden full-image fill on root while each fragment uses separately
+cropped image hash. Recovery must use hidden full fill as test source image;
+inverting fragment crop loses source image. No image bytes added.
+
+Recovery decoded 13,463 source change records and used ephemeral, removed
+importer diagnostic to capture exact source REST ID to native node ID mapping.
+It restored 1,285 exact live source metadata records across 9,785 original/linked
+nodes; 37 unmapped records were archived on first page, never guessed onto layers.
+Offline native writer required: normal `node.set` batch rejects protected imported
+library components. Baseline geometry, component links, styles, variables,
+libraries and image index compared after repair; native reopen reported no repairs.
+
+Validation resized/scaled recovered panels with undo, ran packaged Nine Slice WASM
+panel against paired source image, and visually inspected CPU renders.
+`ui.screenshot` timed out despite responsive app; use `ui.render` and inspect PNG.
+Read-only `plan/recovery/verify_recovered.py` established 112,021 original nodes
+preserved, 1,285 exact source metadata records and 90 editable copies. Recovery
+files are owner data under ignored `plan/`; never commit, publish or use as assets.
+
+This was not importer feature. Standard `.fig` import already maps supported
+export Slice layers, but does not retain arbitrary Figma plugin data or convert
+legacy nine-slice metadata/source images into FigCraft panels. Generic future work
+must separate passive preservation from opt-in conversion, preserve component links
+by default, and safely handle untrusted metadata, complex layouts and protected
+library nodes.
